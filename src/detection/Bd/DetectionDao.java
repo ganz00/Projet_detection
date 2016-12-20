@@ -8,16 +8,26 @@ import java.sql.Statement;
 
 import detection.Datasource.DataSourceSingleConnection;
 
-public class SGBD {
+public class DetectionDao {
 	public DataSourceSingleConnection dataSource;
-
-	public SGBD() {
+	public static DetectionDao  dao=null;
+	
+	private  DetectionDao() {
 		super();
 		this.dataSource = new DataSourceSingleConnection();
 		this.dataSource.setDriver("com.mysql.jdbc.Driver");
 		this.dataSource.setUrl("jdbc:mysql://localhost:8889/Simulateur");
 		this.dataSource.setUser("root");
 		this.dataSource.setPassword("root");
+		
+	}
+	
+	public static DetectionDao getsdao(){
+		if(dao == null){
+			dao = new DetectionDao();
+			return dao;
+		}else
+			return dao;
 	}
 
 	public ResultSet consoParHeureParJour() throws SQLException {
@@ -49,11 +59,21 @@ public class SGBD {
 
 				      // Ex�cution de la requ�te
 				      preparedStmt.execute();
-		
 	}
 
-	public void getEtat() {
-//recuperer les etats de la base
+	public ResultSet getEtat() throws SQLException {
+		ResultSet resultats = null;
+		Connection con = dataSource.getConnection();
+		java.sql.Statement stmt = con.createStatement();
+		String requete = "SELECT * FROM Etat";
+		try {
+			resultats = stmt.executeQuery(requete);
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+		
+		return resultats;	
+
 	}
 	
 	

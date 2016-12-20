@@ -9,7 +9,6 @@ public class ModeleMarkov {
 	
 	public int[][][] A;
 	public int nombreEtat;
-	public ArrayList<Etat> etats; // etats classer du plus petit au plus grand
 	
 public ModeleMarkov(int[][][] matriceTransition, int nombreEtat) {
 		super();

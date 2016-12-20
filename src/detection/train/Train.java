@@ -4,17 +4,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import detection.Bd.SGBD;
+import detection.Bd.DetectionDao;
 
 public class Train {
 	public ArrayList<Etat> etats;
 	public int T = 100;
-	public SGBD sg;
+	public DetectionDao dao;
 	
 	public Train() {
 		super();
 		this.etats = new ArrayList<Etat>();
-		this.sg = new SGBD();
+		this.dao = DetectionDao.getsdao();
 	}
 	
 	public void GetEtat(){
@@ -23,7 +23,7 @@ public class Train {
 		boolean encore = false;
 		ResultSet resultats = null;
 		try {
-			resultats = sg.consoParHeureParJour();
+			resultats = dao.consoParHeureParJour();
 			java.sql.ResultSetMetaData rsmd = resultats.getMetaData();
 			nbCols = rsmd.getColumnCount();
 			while(resultats.next()){
@@ -63,7 +63,7 @@ public class Train {
 	public void enregistrerEtat() throws SQLException{
 		
 		for (Etat etat : etats) {
-			sg.enregistrerEtat(etat.val, etat.tolerance,etat.nb);
+			dao.enregistrerEtat(etat.val, etat.tolerance,etat.nb);
 		}
 	}
 }

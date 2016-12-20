@@ -2,8 +2,6 @@ package detection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import detection.Bd.SGBD;
 import detection.train.Train;
 
 public class Main {
