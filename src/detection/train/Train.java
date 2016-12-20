@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import detection.Bd.SGBD;
-import detection.service.Etat;
 
 public class Train {
 	public ArrayList<Etat> etats;
+	public int T = 100;
 	public SGBD sg;
 	
 	public Train() {
@@ -26,11 +26,36 @@ public class Train {
 			resultats = sg.consoParHeureParJour();
 			java.sql.ResultSetMetaData rsmd = resultats.getMetaData();
 			nbCols = rsmd.getColumnCount();
-			encore = resultats.next();
+			while(resultats.next()){
+				int dispo = etatExist(resultats.getInt(3));
+				int val = resultats.getInt(3);
+				System.out.println(val);
+				switch (dispo) {
+				case -1:
+					etats.add(new Etat(val, T));
+					break;
+
+				default:
+					etats.get(dispo).nb++;
+					break;
+				}
+			}
+			enregistrerEtat();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	
+	public int etatExist(int e){
+		int i=0;
+		for(Etat E:etats){
+			if(E.val + E.tolerance >= e && E.val - E.tolerance <=e ){
+				return i;
+			}
+			i++;
+		}
+		return -1;
 	}
 	
 
@@ -38,7 +63,7 @@ public class Train {
 	public void enregistrerEtat() throws SQLException{
 		
 		for (Etat etat : etats) {
-			sg.enregistrerEtat(etat.id, etat.val, etat.tolerance);
+			sg.enregistrerEtat(etat.val, etat.tolerance,etat.nb);
 		}
 	}
 }

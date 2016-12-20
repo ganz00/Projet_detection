@@ -24,7 +24,7 @@ public class SGBD {
 		ResultSet resultats = null;
 		Connection con = dataSource.getConnection();
 		java.sql.Statement stmt = con.createStatement();
-		String requete = "SELECT consommation.jour,consommation.heure,SUM(consommation.consomation) "
+		String requete = "SELECT consommation.jour,consommation.heure,SUM(consommation.consomation) as conso "
 				+ 			"FROM consommation GROUP BY consommation.jour,consommation.heure;";
 		try {
 			resultats = stmt.executeQuery(requete);
@@ -35,17 +35,18 @@ public class SGBD {
 	return resultats;	
 	}
 
-	public void enregistrerEtat(int id,int val,int tolerance) throws SQLException {
+	public void enregistrerEtat(int val,int tolerance,int occur) throws SQLException {
 		Connection con = dataSource.getConnection();
 		Statement sta = con.createStatement();
-		String query = " insert into Etat (id, val, tolerance)"
+		String query = " insert into Etat (val,tolerance,occurence)"
 				        + " values (?, ?, ?)";
 
 				      // Donn�es � ins�rer dans la base de donn�es
 				      PreparedStatement preparedStmt = con.prepareStatement(query);
-				      preparedStmt.setInt(1, id);
-				      preparedStmt.setInt(2, val);
-				      preparedStmt.setInt (3, tolerance);
+				      preparedStmt.setInt(1, val);
+				      preparedStmt.setInt (2, tolerance);
+				      preparedStmt.setInt(3, occur);
+
 				      // Ex�cution de la requ�te
 				      preparedStmt.execute();
 		

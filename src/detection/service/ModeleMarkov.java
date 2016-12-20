@@ -2,6 +2,8 @@ package detection.service;
 
 import java.util.ArrayList;
 
+import detection.train.Etat;
+
 public class ModeleMarkov {
 	public int[][][] Transition;
 	
