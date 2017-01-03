@@ -1,23 +1,41 @@
 package detection.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-import detection.train.Etat;
+import detection.Bd.TransitionDao;
+import detection.train.*;
 
 public class ModeleMarkov {
-	public int[][][] Transition;
-	
-	public int[][][] A;
+	public ArrayList<Transition> transition;
+	public ArrayList<Transition> B;
 	public int nombreEtat;
+	public int periode;
+
 	
-public ModeleMarkov(int[][][] matriceTransition, int nombreEtat) {
+public ModeleMarkov(ArrayList<Etat> etats,ArrayList<Transition> t, int periode) {
 		super();
-		this.Transition = matriceTransition;
-		this.nombreEtat = nombreEtat;
+		this.nombreEtat = etats.size();	
+		this.transition = t;
+		this.periode = periode;
+		B = new ArrayList<Transition>();
 	}
 
-public void setB(){
+
+
+public void setB() throws SQLException{
 	//contruire la matrice de transition B a l'aide du nombre d'etat et la matrice transition
+	TransitionDao Td = TransitionDao.getsdao();
+	for(Transition T : transition){
+		if(T.periode == periode){
+		int total = Td.getNb(T.etatDebut,T.periode,T.saison);
+		double p = (double)T.nombre/(double)total;
+		Transition t = new Transition(T.etatDebut, T.etatFin, T.periode, T.nombre, p);
+		B.add(t);
+		T.proba = p;
+		Td.saveProba(T.etatDebut,T.etatFin,p,T.saison,T.periode);
+		}
+	}
 	
 }
 public void majmatrice(){

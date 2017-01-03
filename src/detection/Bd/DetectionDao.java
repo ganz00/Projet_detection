@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import detection.Datasource.DataSourceSingleConnection;
 
@@ -12,6 +11,8 @@ public class DetectionDao {
 	public DataSourceSingleConnection dataSource;
 	public static DetectionDao  dao=null;
 	
+	
+	//constructeur privé
 	private  DetectionDao() {
 		super();
 		this.dataSource = new DataSourceSingleConnection();
@@ -21,7 +22,7 @@ public class DetectionDao {
 		this.dataSource.setPassword("root");
 		
 	}
-	
+	//getter dao 
 	public static DetectionDao getsdao(){
 		if(dao == null){
 			dao = new DetectionDao();
@@ -29,13 +30,22 @@ public class DetectionDao {
 		}else
 			return dao;
 	}
+	
+// DAO consommation
 
-	public ResultSet consoParHeureParJour() throws SQLException {
+	public ResultSet consoParHeureParJour(int periode,int saison) throws SQLException {
 		ResultSet resultats = null;
 		Connection con = dataSource.getConnection();
 		java.sql.Statement stmt = con.createStatement();
 		String requete = "SELECT consommation.jour,consommation.heure,SUM(consommation.consomation) as conso "
-				+ 			"FROM consommation GROUP BY consommation.jour,consommation.heure;";
+				+ 			"FROM consommation ";
+		if(periode == 1){
+		requete = requete+" WHERE ((heure >= 0 and heure <= 18) or heure = 22 or heure = 23) and consommation.saison ="+saison;
+				
+		}else{
+			requete = requete+" WHERE heure < 18 and heure < 22 and consommation.saison ="+saison;	
+		}
+		requete = requete+" GROUP BY consommation.jour,consommation.heure";
 		try {
 			resultats = stmt.executeQuery(requete);
 		} catch (SQLException e) {
@@ -45,27 +55,30 @@ public class DetectionDao {
 	return resultats;	
 	}
 
-	public void enregistrerEtat(int val,int tolerance,int occur) throws SQLException {
+	
+	// DAO etat
+	public void enregistrerEtat(int val,int tolerance,int occur,int saison,int periode) throws SQLException {
 		Connection con = dataSource.getConnection();
-		Statement sta = con.createStatement();
-		String query = " insert into Etat (val,tolerance,occurence)"
-				        + " values (?, ?, ?)";
+		String query = " insert into Etat (saison,val,tolerance,occurence,periode)"
+				        + " values (?, ?, ?,?,?)";
 
 				      // Donn�es � ins�rer dans la base de donn�es
 				      PreparedStatement preparedStmt = con.prepareStatement(query);
-				      preparedStmt.setInt(1, val);
-				      preparedStmt.setInt (2, tolerance);
-				      preparedStmt.setInt(3, occur);
+				      preparedStmt.setInt(1, saison);
+				      preparedStmt.setInt(2, val);
+				      preparedStmt.setInt(3, tolerance);
+				      preparedStmt.setInt(4,occur);
+				      preparedStmt.setInt(5,periode);
 
 				      // Ex�cution de la requ�te
 				      preparedStmt.execute();
 	}
 
-	public ResultSet getEtat() throws SQLException {
+	public ResultSet getEtat(int saison,int periode) throws SQLException {
 		ResultSet resultats = null;
 		Connection con = dataSource.getConnection();
 		java.sql.Statement stmt = con.createStatement();
-		String requete = "SELECT * FROM Etat";
+		String requete = "SELECT * FROM Etat where saison ="+saison+" and periode="+periode;
 		try {
 			resultats = stmt.executeQuery(requete);
 		} catch (SQLException e) {
@@ -77,8 +90,10 @@ public class DetectionDao {
 	}
 	
 	
-	public int getconsocour() {
+	public int getconsocour(int heure) {
 		return 0;
 		//recuperer la consommation courante de la base
 			}
+	
+	
 }

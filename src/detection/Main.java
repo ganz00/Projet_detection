@@ -1,18 +1,18 @@
 package detection;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import detection.train.Train;
 
 public class Main {
-	public static Train T;
+	
 	
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		// TODO Auto-generated method stub
-		T = new Train();
-		T.GetEtat();
-		
+		Train T1 = new Train(3);
+		T1.Init();
+		System.out.println("TERMINE");
 	}
 
 }

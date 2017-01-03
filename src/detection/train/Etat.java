@@ -1,14 +1,8 @@
 package detection.train;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import detection.Bd.DetectionDao;
 
 
 public class Etat {
-	public static  ArrayList<Etat> etats;
 	public int id;
 	public int val;
 	public int tolerance;
@@ -36,12 +30,5 @@ public class Etat {
 		return false;
 	}
 	
-	public void setlist() throws SQLException{
-		ResultSet resultats = DetectionDao.getsdao().getEtat();
-		while(resultats.next()){
-			etats.add(new Etat(resultats.getInt(1), 
-					resultats.getInt(2), resultats.getInt(3), resultats.getInt(4)));
-		}
-	}
 
 }
