@@ -27,6 +27,7 @@ public class Train {
 	public void Init() throws SQLException{
 		for(int i = 0 ; i < 2 ; i++) 
 			etats[i] = new ArrayList<Etat>();
+		
 		getEtat(1);
 		getEtat(2);
 		for(Transition T:transition)
@@ -113,9 +114,12 @@ public class Train {
 	
 	public void getTransition(ResultSet resultats,int periode){
 		Transition T = null;
+		Transition.num = 0;
 		int pos = 1;
+		int count = 0;
 		try {
 			do{
+				count++;
 			switch (pos) {
 			case 1:
 				T = new Transition(this.getId(resultats.getInt(3),periode), 0,periode);
@@ -156,7 +160,7 @@ public class Train {
 		switch (statut) {
 		case -1:
 			transition.add(new Transition(T.etatDebut, T.etatFin,periode));
-			num++;
+			Transition.num ++;
 			break;
 
 		default:

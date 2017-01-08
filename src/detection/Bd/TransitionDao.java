@@ -66,7 +66,7 @@ public class TransitionDao {
 
 	}
 	
-	public int getNb(int id,int saison,int periode) throws SQLException {
+	public int getNb(int id,int periode,int saison) throws SQLException {
 		ResultSet resultats = null;
 		Connection con = dataSource.getConnection();
 		java.sql.Statement stmt = con.createStatement();

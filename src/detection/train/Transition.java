@@ -18,7 +18,7 @@ public class Transition {
 		this.id = num;
 		this.periode = periode;
 		this.nombre = 1;
-	}
+}
 	public Transition(int etatDebut, int etatFin,int periode, int nombre,double proba) {
 		super();
 		this.etatDebut = etatDebut;

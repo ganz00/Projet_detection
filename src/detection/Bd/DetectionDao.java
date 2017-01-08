@@ -43,7 +43,7 @@ public class DetectionDao {
 		requete = requete+" WHERE ((heure >= 0 and heure <= 18) or heure = 22 or heure = 23) and consommation.saison ="+saison;
 				
 		}else{
-			requete = requete+" WHERE heure < 18 and heure < 22 and consommation.saison ="+saison;	
+			requete = requete+" WHERE heure > 18 and heure < 22 and consommation.saison ="+saison;	
 		}
 		requete = requete+" GROUP BY consommation.jour,consommation.heure";
 		try {
