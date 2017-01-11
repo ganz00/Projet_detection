@@ -51,5 +51,10 @@ public ArrayList<Etat> getnext(Etat E){
 	return null;
 	
 }
-
+public double consoTotal(Heure h ,Date d) throws SQLException{
+	double consTT =0;
+	consTT=dao.consoTotal(h, d);
+	return consTT;
+	
+}
 }
