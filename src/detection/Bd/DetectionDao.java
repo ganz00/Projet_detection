@@ -32,7 +32,24 @@ public class DetectionDao {
 	}
 	
 // DAO consommation
-
+public static double consoTotal(Heure h, Date d) throws SQLException
+{
+	double resultats = 0;
+	ResultSet resultats1=null;
+	Connection con = dataSource.getConnection();
+	java.sql.Statement stmt = con.createStatement();
+	String requete = "SELECT SUM(consommation.consommation) as consoTotal"+
+			"FROM consommation  where consommation.heure ="+h+"and consommation.jour = "+d.jour+"and consommation ="+d.mois;
+	try{
+	resultats= stmt.executeQuery(requete).getDouble("consoTotal");
+	
+	}
+	catch(SQLException e){
+		System.out.println(e);
+	}
+	return resultats ;
+	
+}
 	public ResultSet consoParHeureParJour(int periode,int saison) throws SQLException {
 		ResultSet resultats = null;
 		Connection con = dataSource.getConnection();
