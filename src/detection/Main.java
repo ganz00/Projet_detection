@@ -1,8 +1,11 @@
 package detection;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import detection.service.Detection;
+import detection.train.Etat;
+import detection.train.EtatProbable;
 import detection.train.Train;
 import simulation.Date;
 import simulation.Heure;
@@ -10,63 +13,55 @@ import simulation.Heure;
 public class Main {
 	public static Date date = new Date();
 	public static Heure h = new Heure();
-	public static int boo = 0;
-
+	public static boolean newSaison = false;
+	public static Train T[];
 	public static void main(String[] args) throws SQLException {
 		// TODO Auto-generated method stub
 		boolean continuer = true;
-		Train T1 = new Train(3);
-		T1.Init();
-		int p;
+		Train currentT;
+		int mois_cur = 0;
 		date.annee = 2016;
 		date.mois = 1;
 		date.jour = 1;
-		while(continuer){
-			int consommation = Detection.getConso(h.heure, date.jour, date.mois);
-			if(h.heure>18 && h.heure<22){
-				p = 2;
-			}else
-				p=1;
-			
-		}
+		T = new Train[4];
+		T[2] = new Train(3);
+		T[2].Init();
 		
-	}
-	public static void calcul() {
-
-		if (h.heure < 23) {
-			h.heure++;
-		} else {
-
-			h.heure = 0;
-			if (date.jour < 30) {
-				boo = 0;
-				date.jour++;
-			} else {
-				boo = 1;
-				date.jour = 1;
-				if (date.mois < 12) {
-					date.mois++;
-				} else {
-					date.annee++;
+		
+		int p=1;
+		while(continuer){
+			mois_cur = date.mois;
+			int saison = Detection.DetermineSaison(date.mois);
+			if(newSaison == true){
+				T[saison-1] = new Train(saison);
+				T[saison-1].Init();
+				newSaison = false;
+			}
+			if(T[saison-1] != null){
+				currentT = T[saison-1];
+			}else{
+				currentT = T[2];
+				newSaison = true;
+			}
+			while(date.mois == mois_cur){
+				p = Detection.getPeriode(h);
+				int consommation = (int) Detection.getConso(h.heure, date.jour, date.mois);
+				if(consommation!= -1){
+				Etat cur = Detection.getEtat(consommation,p,currentT);
+				ArrayList<EtatProbable> suivant = T[saison-1].M[p].getnext(cur, p, saison);
+				int test = Detection.checkEtat(cur, suivant);
+				if(test==-1)
+					Detection.setErreur(cur, currentT.getEtatById(suivant.get(1).Idetat, p),h.heure,date.mois);
+				Detection.majErreur(h.heure, date.jour, date.mois, currentT);
+				Detection.calcul(h, date);
+				}else{
+					continuer = false;
 				}
 			}
+			
 		}
-
-	}
-	public static int DetermineSaison(int mois) {
-		int numero = 0;
-
-		if (mois == 12 || mois <= 3) {
-			numero = 2;
-		} else if (mois > 3 && mois <= 6) {
-			numero = 1;
-		} else if (mois > 6 && mois <= 9) {
-			numero = 0;
-		} else if (mois > 9 && mois <= 12) {
-			numero = 3;
-		}
-
-		return numero;
+		System.out.println("Fini le "+date.jour+"-"+date.mois+"-"+date.annee+"   à "+h.heure+" heure");
+		
 	}
 
 }

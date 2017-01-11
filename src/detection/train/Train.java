@@ -98,7 +98,14 @@ public class Train {
 		}
 		return -1;
 	}
-	
+	public Etat getEtatById(int id,int periode){
+		for(Etat E:etats[periode-1]){
+			if(E.id == id)
+				return E;
+		}
+		return null;
+		
+	}
 	public int etatExist(int e,int periode ){
 		int i=0;
 		for(Etat E:etats[periode-1]){
@@ -116,10 +123,8 @@ public class Train {
 		Transition T = null;
 		Transition.num = 0;
 		int pos = 1;
-		int count = 0;
 		try {
 			do{
-				count++;
 			switch (pos) {
 			case 1:
 				T = new Transition(this.getId(resultats.getInt(3),periode), 0,periode);
@@ -155,6 +160,7 @@ public class Train {
 		}
 		return -1;
 	}
+	
 	public  void updateTransition(Transition T,int periode){
 		int statut = transitionExist(T.etatDebut,T.etatFin,T.periode);
 		switch (statut) {
@@ -169,6 +175,7 @@ public class Train {
 		}
 		
 	}
+	
 	public  void importTransition(){
 		//determiner les etats
 		ResultSet resultats = null;

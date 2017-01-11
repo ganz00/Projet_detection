@@ -98,5 +98,14 @@ public class TransitionDao {
 				      // Ex�cution de la requ�te
 				      preparedStmt.execute();
 	}
+	public ResultSet getNext(int id,int periode,int saison) throws SQLException{
+		ResultSet resultats = null;
+		String query = "SELECT `fin`, `proba`, FROM transition WHERE debut ="+id
+				+ " and periode ="+periode+" and saison="+saison+" ORDER BY `transition`.`proba` DESC;";
+		Connection con = dataSource.getConnection();
+		java.sql.Statement stmt = con.createStatement();
+		resultats = stmt.executeQuery(query);
+		return resultats;
+	}
 	
 }

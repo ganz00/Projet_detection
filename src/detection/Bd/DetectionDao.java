@@ -6,20 +6,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import detection.Datasource.DataSourceSingleConnection;
+import simulation.Date;
+import simulation.Heure;
 
 public class DetectionDao {
-	public DataSourceSingleConnection dataSource;
+	public static DataSourceSingleConnection dataSource;
 	public static DetectionDao  dao=null;
 	
 	
 	//constructeur privé
 	private  DetectionDao() {
 		super();
-		this.dataSource = new DataSourceSingleConnection();
-		this.dataSource.setDriver("com.mysql.jdbc.Driver");
-		this.dataSource.setUrl("jdbc:mysql://localhost:8889/Simulateur");
-		this.dataSource.setUser("root");
-		this.dataSource.setPassword("root");
+		dataSource = new DataSourceSingleConnection();
+		dataSource.setDriver("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost:8889/Simulateur");
+		dataSource.setUser("root");
+		dataSource.setPassword("root");
 		
 	}
 	//getter dao 
@@ -40,7 +42,7 @@ public class DetectionDao {
 		String requete = "SELECT consommation.jour,consommation.heure,SUM(consommation.consomation) as conso "
 				+ 			"FROM consommation ";
 		if(periode == 1){
-		requete = requete+" WHERE ((heure >= 0 and heure <= 18) or heure = 22 or heure = 23) and consommation.saison ="+saison;
+		requete = requete+" WHERE ((heure >= 0 and heure <= 18) or heure = 22 or heure = 23) and consommation.mois = 1";
 				
 		}else{
 			requete = requete+" WHERE heure > 18 and heure < 22 and consommation.saison ="+saison;	
@@ -90,10 +92,27 @@ public class DetectionDao {
 	}
 	
 	
-	public int getconsocour(int heure) {
-		return 0;
-		//recuperer la consommation courante de la base
-			}
+	public static double getconsocour(int heure,int jour,int mois) throws SQLException {
+		double resultats = 0;
+	 	Connection con = dataSource.getConnection();
+	 	java.sql.Statement stmt = con.createStatement();
+	 	String requete = "SELECT SUM(consommation.consomation) as consoTotal"+
+	 			"FROM consommation  where consommation.heure ="+heure+"and consommation.jour = "+jour+"and consommation.mois ="+mois;
+	 	try{
+	 	resultats= stmt.executeQuery(requete).getDouble("consoTotal");
+	 	
+	 	}
+	 	catch(SQLException e){
+	 		System.out.println(e);
+	 	}
+	 	return resultats ;
+	}
+	
+	public void saveErreur(int heure,int mois, int jour,int eccart) {
+		//
+	}
+	
+	
 	
 	
 }

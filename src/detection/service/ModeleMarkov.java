@@ -1,8 +1,10 @@
 package detection.service;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import detection.Bd.DetectionDao;
 import detection.Bd.TransitionDao;
 import detection.train.*;
 
@@ -46,9 +48,13 @@ public void editTransition(int id,int etat1,int etat2){
 	//rajouter un transition dans la matrice transition en fonction de la saison id
 }
 
-public ArrayList<Etat> getnext(Etat E){
-	//utiliser la matrice pour recuperer les prochain etat probable
-	return null;
+public ArrayList<EtatProbable> getnext(Etat E,int p,int s) throws SQLException{
+	ResultSet resultats = TransitionDao.getsdao().getNext(E.id, p, s);
+	ArrayList<EtatProbable> etats = new ArrayList<EtatProbable>();
+	while(resultats.next()){
+		etats.add(new EtatProbable(resultats.getInt(1), resultats.getInt(2)));
+	}
+	return etats;
 	
 }
 
