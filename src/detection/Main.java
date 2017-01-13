@@ -23,6 +23,7 @@ public class Main {
 		date.annee = 2016;
 		date.mois = 1;
 		date.jour = 1;
+		h.heure =1;
 		T = new Train[4];
 		T[2] = new Train(3);
 		T[2].Init();
@@ -33,25 +34,29 @@ public class Main {
 			mois_cur = date.mois;
 			int saison = Detection.DetermineSaison(date.mois);
 			if(newSaison == true){
-				T[saison-1] = new Train(saison);
-				T[saison-1].Init();
+				T[saison] = new Train(saison);
+				T[saison].Init();
 				newSaison = false;
 			}
-			if(T[saison-1] != null){
-				currentT = T[saison-1];
+			if(T[saison] != null){
+				currentT = T[saison];
 			}else{
 				currentT = T[2];
 				newSaison = true;
 			}
+			int start = (int) Detection.getConso(0, date.jour, date.mois);
+			Etat startE = Detection.getEtat(start,p,currentT);
 			while(date.mois == mois_cur){
 				p = Detection.getPeriode(h);
 				int consommation = (int) Detection.getConso(h.heure, date.jour, date.mois);
 				if(consommation!= -1){
-				Etat cur = Detection.getEtat(consommation,p,currentT);
-				ArrayList<EtatProbable> suivant = T[saison-1].M[p].getnext(cur, p, saison);
+				Etat cur = Detection.getEtat(consommation,p+1,currentT);
+				ArrayList<EtatProbable> suivant = T[saison].M[p].getnext(startE, p+1, saison);
 				int test = Detection.checkEtat(cur, suivant);
-				if(test==-1)
-					Detection.setErreur(cur, currentT.getEtatById(suivant.get(1).Idetat, p),h.heure,date.mois);
+				if(test==-1){
+					Detection.setErreur(cur, currentT.getEtatById(suivant.get(1).Idetat, p-1),h.heure,date.mois);
+				}
+				startE = cur;
 				Detection.majErreur(h.heure, date.jour, date.mois, currentT);
 				Detection.calcul(h, date);
 				}else{

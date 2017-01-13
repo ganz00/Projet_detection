@@ -97,10 +97,11 @@ public class DetectionDao {
 	 	Connection con = dataSource.getConnection();
 	 	java.sql.Statement stmt = con.createStatement();
 	 	String requete = "SELECT SUM(consommation.consomation) as consoTotal"+
-	 			"FROM consommation  where consommation.heure ="+heure+"and consommation.jour = "+jour+"and consommation.mois ="+mois;
+	 			" FROM consommation  where consommation.heure = "+heure+" and consommation.jour = "+jour+" and consommation.mois = "+mois;
 	 	try{
-	 	resultats= stmt.executeQuery(requete).getDouble("consoTotal");
-	 	
+	 	ResultSet res = stmt.executeQuery(requete);
+	 	res.next();
+	 	resultats = res.getDouble("consoTotal");
 	 	}
 	 	catch(SQLException e){
 	 		System.out.println(e);

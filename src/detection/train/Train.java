@@ -32,7 +32,7 @@ public class Train {
 		getEtat(2);
 		for(Transition T:transition)
 			T.saison = saison;
-		saveTransitions();
+		//saveTransitions();
 		M = new ModeleMarkov[2];
 		M[0] = new ModeleMarkov(etats[0], transition,1);
 		M[0].setB();
@@ -68,7 +68,7 @@ public class Train {
 					break;
 				}
 			}
-			enregistrerEtat(periode);
+			//enregistrerEtat(periode);
 			etats[periode-1] = this.getlist(periode);
 			resultats.first();
 			getTransition(resultats,periode);

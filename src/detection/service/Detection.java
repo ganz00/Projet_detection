@@ -25,8 +25,8 @@ public class Detection {
 	}
 	public static int getPeriode(Heure h){
 		if(h.heure>18 && h.heure<22)
-			return 2;
-		return 1;
+			return 1;
+		return 0;
 	}
 	
 	public static void calcul(Heure h,Date date) {
@@ -72,9 +72,9 @@ public class Detection {
 		Etat E;
 		if(dispo == -1){
 			 E = new Etat(conso, 50);
-			T.etats[p].add(E);
+			T.etats[p-1].add(E);
 		}else
-			E = T.etats[p].get(dispo);
+			E = T.etats[p-1].get(dispo);
 		return E;
 	}
 	public static void setErreur(Etat reel,Etat predi,int h,int m){

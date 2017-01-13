@@ -35,7 +35,7 @@ public void setB() throws SQLException{
 		Transition t = new Transition(T.etatDebut, T.etatFin, T.periode, T.nombre, p);
 		B.add(t);
 		T.proba = p;
-		Td.saveProba(T.etatDebut,T.etatFin,p,T.saison,T.periode);
+		//Td.saveProba(T.etatDebut,T.etatFin,p,T.saison,T.periode);
 		}
 	}
 	

@@ -100,8 +100,8 @@ public class TransitionDao {
 	}
 	public ResultSet getNext(int id,int periode,int saison) throws SQLException{
 		ResultSet resultats = null;
-		String query = "SELECT `fin`, `proba`, FROM transition WHERE debut ="+id
-				+ " and periode ="+periode+" and saison="+saison+" ORDER BY `transition`.`proba` DESC;";
+		String query = "SELECT fin, proba FROM transition WHERE debut ="+id
+				+ " and periode ="+periode+" and saison="+saison+" ORDER BY proba DESC;";
 		Connection con = dataSource.getConnection();
 		java.sql.Statement stmt = con.createStatement();
 		resultats = stmt.executeQuery(query);
