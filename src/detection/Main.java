@@ -41,7 +41,7 @@ public class Main {
 			if(T[saison] != null){
 				currentT = T[saison];
 			}else{
-				currentT = T[2];
+			currentT=currentT.consomHiver(currentT, saison);
 				newSaison = true;
 			}
 			int start = (int) Detection.getConso(0, date.jour, date.mois);
