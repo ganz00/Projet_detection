@@ -3,6 +3,8 @@ package detection.train;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import detection.Bd.DetectionDao;
 import detection.Bd.TransitionDao;
 import detection.service.ModeleMarkov;
@@ -188,6 +190,31 @@ public class Train {
 		
 	}
 	
-	
+	public static  Train consomHiver(Train t2,int saison){
+		Train t1 = new Train(saison);
+		t1=t2;
+Iterator<Etat> iter = t1.etats[0].iterator();
+int valeur = 1000000000;
+Etat objet=iter.next();
+while(iter.hasNext()){
+
+	if(valeur >objet.val){
+		valeur=objet.val;
+	}
+while(iter.hasNext())
+{
+if(saison==3){
+	objet.val=objet.val-valeur;
+}
+else if(saison!=3){
+	objet.val=objet.val-2/3*valeur;
+}
+}
+
+}
+
+return t1;
+		
+	}
 	
 }
