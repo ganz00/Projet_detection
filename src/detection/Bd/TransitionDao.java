@@ -45,7 +45,8 @@ public class TransitionDao {
 				      preparedStmt.setInt(3, T.saison);
 				      preparedStmt.setInt (4, T.periode);
 				      preparedStmt.setInt(5, T.nombre);
-
+				      System.out.println(preparedStmt.toString());
+				      
 				      // Ex�cution de la requ�te
 				      preparedStmt.execute();
 	}

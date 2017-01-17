@@ -3,6 +3,8 @@ package detection.train;
 
 
 public class Etat {
+
+
 	public int id;
 	public int val;
 	public int tolerance;
@@ -29,6 +31,9 @@ public class Etat {
 			return true;
 		return false;
 	}
-	
+	@Override
+	public String toString() {
+		return "Etat [id=" + id + ", val=" + val + ", tolerance=" + tolerance + ", proba=" + proba + ", nb=" + nb + "]";
+	}
 
 }

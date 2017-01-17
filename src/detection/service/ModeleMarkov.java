@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import detection.Bd.DetectionDao;
 import detection.Bd.TransitionDao;
 import detection.train.*;
 
@@ -35,7 +34,7 @@ public void setB() throws SQLException{
 		Transition t = new Transition(T.etatDebut, T.etatFin, T.periode, T.nombre, p);
 		B.add(t);
 		T.proba = p;
-		//Td.saveProba(T.etatDebut,T.etatFin,p,T.saison,T.periode);
+		Td.saveProba(T.etatDebut,T.etatFin,p,T.saison,T.periode);
 		}
 	}
 	
@@ -52,7 +51,7 @@ public ArrayList<EtatProbable> getnext(Etat E,int p,int s) throws SQLException{
 	ResultSet resultats = TransitionDao.getsdao().getNext(E.id, p, s);
 	ArrayList<EtatProbable> etats = new ArrayList<EtatProbable>();
 	while(resultats.next()){
-		etats.add(new EtatProbable(resultats.getInt(1), resultats.getInt(2)));
+		etats.add(new EtatProbable(resultats.getInt(1), resultats.getDouble(2)));
 	}
 	return etats;
 	

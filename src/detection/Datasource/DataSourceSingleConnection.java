@@ -138,7 +138,7 @@ public class DataSourceSingleConnection implements DataSource {
 	}
 	
 	public DataSourceSingleConnection( String path ) throws IOException {
-		this( (InputStream) new FileInputStream(path) );
+		this( new FileInputStream(path) );
 	}
 	
 	public DataSourceSingleConnection( URL url ) throws IOException {

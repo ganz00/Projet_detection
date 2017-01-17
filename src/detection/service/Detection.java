@@ -25,8 +25,8 @@ public class Detection {
 	}
 	public static int getPeriode(Heure h){
 		if(h.heure>18 && h.heure<22)
-			return 1;
-		return 0;
+			return 2;
+		return 1;
 	}
 	
 	public static void calcul(Heure h,Date date) {

@@ -44,7 +44,8 @@ public class FactoryProxyConnection {
 		
 		// Actions
 		
-	    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+	    @Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 	    	
 	    	switch ( method.getName() ) {
 	    		

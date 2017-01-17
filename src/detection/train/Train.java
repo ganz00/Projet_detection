@@ -32,7 +32,7 @@ public class Train {
 		getEtat(2);
 		for(Transition T:transition)
 			T.saison = saison;
-		//saveTransitions();
+		saveTransitions();
 		M = new ModeleMarkov[2];
 		M[0] = new ModeleMarkov(etats[0], transition,1);
 		M[0].setB();
@@ -56,11 +56,11 @@ public class Train {
 		try {
 			resultats = dao.consoParHeureParJour(periode, saison);
 			while(resultats.next()){
-				int dispo = etatExist(resultats.getInt(3),periode);
-				int val = resultats.getInt(3);
+				int valeur = resultats.getInt(3);
+				int dispo = etatExist(valeur,periode);
 				switch (dispo) {
 				case -1:
-					etats[periode-1].add(new Etat(val, T));
+					etats[periode-1].add(new Etat(valeur, T));
 					break;
 
 				default:
@@ -68,10 +68,11 @@ public class Train {
 					break;
 				}
 			}
-			//enregistrerEtat(periode);
+			
+			enregistrerEtat(periode);
 			etats[periode-1] = this.getlist(periode);
-			resultats.first();
-			getTransition(resultats,periode);
+			resultats.close();
+			getTransition(periode);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -93,7 +94,9 @@ public class Train {
 	// Autres methodes
 	public  int getId(int val,int periode){
 		for(Etat E:etats[periode-1]){
-			if(E.val == val)
+			int valeurS = E.val + E.tolerance;
+			int valeurI = E.val - E.tolerance;
+			if(val >= valeurI && val <= valeurS)
 				return E.id;
 		}
 		return -1;
@@ -119,12 +122,14 @@ public class Train {
 
 	//GESTION TRANSITION //
 	
-	public void getTransition(ResultSet resultats,int periode){
+	public void getTransition(int periode) throws SQLException{
+		ResultSet resultats = dao.consoParHeureParJour(periode, saison);
 		Transition T = null;
 		Transition.num = 0;
 		int pos = 1;
 		try {
-			do{
+			while(resultats.next())
+			{
 			switch (pos) {
 			case 1:
 				T = new Transition(this.getId(resultats.getInt(3),periode), 0,periode);
@@ -132,13 +137,15 @@ public class Train {
 				break;
 
 			default:
-				T.etatFin = this.getId(resultats.getInt(3),periode);
+				int val = resultats.getInt(3);
+				int fin = this.getId(val,periode);
+				T.etatFin = fin;
 				resultats.previous();
 				pos = 1;
 				updateTransition(T,periode);
 				break;
 			}	
-			}while(resultats.next());
+			}
 			resultats.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

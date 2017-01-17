@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import detection.service.Detection;
+import detection.service.Erreur;
 import detection.train.Etat;
 import detection.train.EtatProbable;
 import detection.train.Train;
@@ -24,8 +25,9 @@ public class Main {
 		date.mois = 1;
 		date.jour = 1;
 		h.heure =1;
+		Erreur.init();
 		T = new Train[4];
-		T[2] = new Train(3);
+		T[2] = new Train(2);
 		T[2].Init();
 		
 		
@@ -47,14 +49,21 @@ public class Main {
 			int start = (int) Detection.getConso(0, date.jour, date.mois);
 			Etat startE = Detection.getEtat(start,p,currentT);
 			while(date.mois == mois_cur){
+				try{
 				p = Detection.getPeriode(h);
 				int consommation = (int) Detection.getConso(h.heure, date.jour, date.mois);
 				if(consommation!= -1){
-				Etat cur = Detection.getEtat(consommation,p+1,currentT);
-				ArrayList<EtatProbable> suivant = T[saison].M[p].getnext(startE, p+1, saison);
+				Etat cur = Detection.getEtat(consommation,p,currentT);
+				ArrayList<EtatProbable> suivant = T[saison].M[p-1].getnext(startE, p, saison);
 				int test = Detection.checkEtat(cur, suivant);
 				if(test==-1){
-					Detection.setErreur(cur, currentT.getEtatById(suivant.get(1).Idetat, p-1),h.heure,date.mois);
+					if(!suivant.isEmpty())
+						Detection.setErreur(cur, currentT.getEtatById(suivant.get(1).Idetat, p),h.heure,date.mois);
+					else{
+						System.out.println(h.toString());
+						System.out.println(cur.toString());
+						System.out.println("periode "+p);
+					}
 				}
 				startE = cur;
 				Detection.majErreur(h.heure, date.jour, date.mois, currentT);
@@ -62,6 +71,11 @@ public class Main {
 				}else{
 					continuer = false;
 				}
+			}catch (Exception e) {
+				System.out.println(h.toString());
+				System.out.println(startE.toString());
+				System.out.println("periode "+p);
+				e.printStackTrace();
 			}
 			
 		}
@@ -69,4 +83,5 @@ public class Main {
 		
 	}
 
+}
 }

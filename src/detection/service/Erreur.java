@@ -13,6 +13,12 @@ public int type;
 public int heure;
 public int mois;
 public int ecart;
+
+public static void init(){
+	erreurSimple = new ArrayList<Erreur>();
+	erreurMoyen = new ArrayList<Erreur>();
+}
+
 public Erreur(int ecart,int h,int mois) {
 	this.ecart = ecart;
 	this.heure = h;

@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import detection.Datasource.DataSourceSingleConnection;
-import simulation.Date;
-import simulation.Heure;
 
 public class DetectionDao {
 	public static DataSourceSingleConnection dataSource;
