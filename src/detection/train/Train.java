@@ -1,8 +1,14 @@
 package detection.train;
 
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import detection.Main;
 import detection.Bd.DetectionDao;
 import detection.Bd.TransitionDao;
 import detection.service.ModeleMarkov;
@@ -15,24 +21,38 @@ public class Train {
 	public int saison;
 	public int T = 100;
 	int num = 0;
+	
+
+final Logger logger = Logger.getLogger(Train.class.getName());
 	@SuppressWarnings("unchecked")
 	public Train(int saison)  {
+		
 		super();
 		this.etats = new ArrayList[2];
 		this.transition = new ArrayList<Transition>();
 		this.dao = DetectionDao.getsdao();
 		this.saison = saison;
+		try {
+			
+			InputStream in=Main.class.getResourceAsStream("/META-INF/logging.properties");
+			LogManager.getLogManager().readConfiguration(in);
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	public void Init() throws SQLException{
 		for(int i = 0 ; i < 2 ; i++) 
 			etats[i] = new ArrayList<Etat>();
-		
+	// recuperation etat1 et 2	
 		getEtat(1);
 		getEtat(2);
 		for(Transition T:transition)
+			// creation des transition
 			T.saison = saison;
-		//saveTransitions();
+		saveTransitions();
+		// enregistrement 
 		M = new ModeleMarkov[2];
 		M[0] = new ModeleMarkov(etats[0], transition,1);
 		M[0].setB();
@@ -54,6 +74,7 @@ public class Train {
 		//determiner les etats
 		ResultSet resultats = null;
 		try {
+			logger.log(Level.FINE ,"Determination de l'etat");
 			resultats = dao.consoParHeureParJour(periode, saison);
 			while(resultats.next()){
 				int dispo = etatExist(resultats.getInt(3),periode);
@@ -68,12 +89,13 @@ public class Train {
 					break;
 				}
 			}
-			//enregistrerEtat(periode);
+			enregistrerEtat(periode);
 			etats[periode-1] = this.getlist(periode);
 			resultats.first();
 			getTransition(resultats,periode);
 			
 		} catch (SQLException e) {
+			logger.log(Level.SEVERE,"Erreur dans la base de donnes",e);
 			e.printStackTrace();
 		}
 		
@@ -107,14 +129,19 @@ public class Train {
 		
 	}
 	public int etatExist(int e,int periode ){
+		
 		int i=0;
 		for(Etat E:etats[periode-1]){
 			if(E.val + E.tolerance >= e && E.val - E.tolerance <=e ){
 				return i;
+				
 			}
+			logger.log(Level.INFO, "etat existe");
 			i++;
 		}
+		logger.log(Level.INFO, "etat n'existe pas ");
 		return -1;
+		
 	}
 
 	//GESTION TRANSITION //
@@ -150,14 +177,17 @@ public class Train {
 		for(Transition t:transition){
 			TransitionDao.getsdao().savetransition(t);
 		}
+		logger.log(Level.INFO, " transition enregistrée");
 	}
 
 	
 	public  int transitionExist(int etatDebut, int etatFin, int periode){
 		for(Transition t:transition){
 			if(t.etatDebut == etatDebut && t.etatFin == etatFin && t.periode == periode)
+				logger.log(Level.INFO, "la transition existe  ");
 				return t.id;
 		}
+		logger.log(Level.INFO, "la transition n'existe pas ");
 		return -1;
 	}
 	
@@ -166,6 +196,7 @@ public class Train {
 		switch (statut) {
 		case -1:
 			transition.add(new Transition(T.etatDebut, T.etatFin,periode));
+			logger.log(Level.INFO, "modification de transition effectuee");
 			Transition.num ++;
 			break;
 
@@ -180,6 +211,7 @@ public class Train {
 		//determiner les etats
 		ResultSet resultats = null;
 		transition.clear();
+		logger.log(Level.INFO, "importation de la transition  ");
 		try {
 			resultats = TransitionDao.getsdao().getTransiton(saison);
 			num=1;
@@ -190,6 +222,7 @@ public class Train {
 			
 			resultats.close();
 		} catch (SQLException e) {
+			logger.log(Level.SEVERE, "erreure avec la BD importation transition ",e);
 			e.printStackTrace();
 		}
 		
